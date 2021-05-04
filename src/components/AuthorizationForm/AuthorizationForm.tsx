@@ -1,35 +1,51 @@
-import React, { Dispatch, SetStateAction, useCallback } from "react";
+import React, { useCallback } from "react";
+import { useDispatch } from "react-redux";
+import { userStateActions } from "../../store/userState";
+import { useSelector } from "../../store";
+import { isLoggedInActions } from "../../store/isLoggedIn";
 
-interface AuthorizationFormProps {
-  userName: string;
-  setUserName: Dispatch<SetStateAction<string>>;
-  setIsLoggedIn: Dispatch<SetStateAction<boolean>>;
-}
+const AuthorizationForm = () => {
+  const dispatch = useDispatch();
+  const userName = useSelector((state) => state.userState.user);
 
-const AuthorizationForm = ({
-  userName,
-  setUserName,
-  setIsLoggedIn,
-}: AuthorizationFormProps) => {
   const onSubmit = () => {
     if (userName.length > 0) {
-      return setIsLoggedIn(true);
+      return dispatch(isLoggedInActions.setIsLoggedIn(true));
     }
-    return setIsLoggedIn(false);
   };
 
   return (
     <>
-      <div>
-        <input
-          type="text"
-          placeholder="Введите логин"
-          value={userName}
-          onChange={useCallback((event) => setUserName(event.target.value), [])}
-        />
-        <button type="submit" onClick={onSubmit}>
-          Авторизоваться
-        </button>
+      <div
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
+        <div
+          style={{
+            width: "30%",
+            display: "flex",
+            flexDirection: "column",
+            marginTop: 100,
+            alignItems: "center",
+          }}
+        >
+          <input
+            type="text"
+            placeholder="Введите логин"
+            value={userName || undefined}
+            onChange={useCallback(
+              (event) => dispatch(userStateActions.setUser(event.target.value)),
+              []
+            )}
+            style={{ height: 20, width: "80%", marginBottom: 20 }}
+          />
+          <button type="submit" onClick={onSubmit} style={{ width: "50%" }}>
+            Авторизоваться
+          </button>
+        </div>
       </div>
     </>
   );
